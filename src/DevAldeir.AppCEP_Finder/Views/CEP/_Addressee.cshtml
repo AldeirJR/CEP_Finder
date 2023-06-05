@@ -1,0 +1,97 @@
+﻿@model string
+
+
+<div id="container1" data-partialview="_Addressee">
+<div class="container" id="container-dest">
+    <h2>Dados do Destinatário</h2>
+
+    @if (string.IsNullOrEmpty(Model))
+    {
+        <div class="alert alert-info" role="alert">
+            Insira um CEP válido para obter os dados do endereço.
+        </div>
+    }
+    else
+    {
+        var address = Newtonsoft.Json.JsonConvert.DeserializeObject<dynamic>(Model);
+
+        <div class="card" >
+            <div class="card-body" >
+                <h5 class="card-title"id="cep_dest">CEP: @address.cep</h5>
+                <p class="card-text" id="logradouro_dest">Logradouro: @address.logradouro</p>
+                <p class="card-text"id="bairro_dest">Bairro: @address.bairro</p>
+                <p class="card-text"id="cidade_dest">Cidade: @address.localidade</p>
+                <p class="card-text"id="estado_dest">Estado: @address.uf</p>
+                   
+            </div>
+           
+
+        </div>
+    }
+
+    <form >
+           
+            
+            <div class="form-group">
+                <label for="cep">Destinatário</label>
+                <label for="cep">CEP:</label>
+                <input type="text" class="form-control" id="cep-input-dest" name="cep" placeholder="Digite o CEP">
+            </div>
+
+            </br>
+            <button type="submit" id="btn_Addressee" class="btn btn-primary">Buscar CEP</button>
+
+            <div class="form-group">
+                <label for="numero">Número:</label>
+                <input type="text" class="form-control" id="numero-input-dest" name="numero" placeholder="Digite o número">
+            </div>
+            <div class="form-group">
+                <label for="complemento">Complemento:</label>
+                <input type="text" class="form-control" id="complemento-input-dest" name="complemento" placeholder="Digite o complemento">
+            </div>
+            <div class="form-group">
+                <label for="nome">Nome:</label>
+                <input type="text" class="form-control" id="nome-input-dest" name="nome" placeholder="Digite o nome">
+            </div>
+
+      
+        
+    </form>
+</div>
+</div>
+<script>
+
+    var buscaCEPBtn = document.getElementById('btn_Addressee');
+    buscaCEPBtn.addEventListener('click', function (event) {
+        event.preventDefault(); // Evita o comportamento padrão do botão
+
+        var cepInput = document.getElementById('cep-input-dest');
+        var cep = cepInput.value;
+
+        // Faz a requisição POST para obter a Partial View atualizada
+        fetch('/ViaCep/GetAddressPartial?cep=' + encodeURIComponent(cep), {
+            method: 'POST'
+        })
+            .then(response => response.text())
+            .then(data => {
+                var enderecoPartial = document.getElementById('container-dest');
+                enderecoPartial.innerHTML = data;
+                
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    });
+
+
+
+
+
+</script>
+
+
+
+
+
+
+

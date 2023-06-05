@@ -1,0 +1,107 @@
+﻿
+@model string
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Endereço ViaCep</title>
+    
+</head>
+<body>
+    <div id="destinatario" >
+
+    @await Html.PartialAsync("_Sender");
+
+   </div>
+
+    <div id="remetente" >
+    @await Html.PartialAsync("_Addressee");
+   
+    </div>
+
+    <button type="button" id="btn_GerarEtiqueta"  class="btn btn-primary">Gerar Etiqueta</button>
+
+</body>
+</html>
+
+
+<script>
+
+  
+
+    var gerarEtiquetaBtn = document.getElementById('btn_GerarEtiqueta');
+    gerarEtiquetaBtn.addEventListener('click', function (event) {
+        event.preventDefault(); // Evita o comportamento padrão do botão
+
+        // Obter os dados do destinatário
+        var destinatarioCard = document.querySelector('#destinatario .card');
+        var destinatarioCEP = destinatarioCard.querySelector('.card-title').innerText;
+        var destinatarioLogradouro = destinatarioCard.querySelector('.card-text:nth-of-type(1)').innerText;
+        var destinatarioBairro = destinatarioCard.querySelector('.card-text:nth-of-type(2)').innerText;
+        var destinatarioCidade = destinatarioCard.querySelector('.card-text:nth-of-type(3)').innerText;
+        var destinatarioEstado = destinatarioCard.querySelector('.card-text:nth-of-type(4)').innerText;
+        var destinatarioNumero = document.getElementById('numero-input-dest').value;
+        var destinatarioComplemento = document.getElementById('complemento-input-dest').value;
+        var destinatarioNome = document.getElementById('nome-input-dest').value;
+         
+        // Obter os dados do remetente
+        var remetenteCard = document.querySelector('#remetente .card');
+        var remetenteCEP = remetenteCard.querySelector('.card-title').innerText;
+        var remetenteLogradouro = remetenteCard.querySelector('.card-text:nth-of-type(1)').innerText;
+        var remetenteBairro = remetenteCard.querySelector('.card-text:nth-of-type(2)').innerText;
+        var remetenteCidade = remetenteCard.querySelector('.card-text:nth-of-type(3)').innerText;
+        var remetenteEstado = remetenteCard.querySelector('.card-text:nth-of-type(4)').innerText;
+        var remetenteNumero = document.getElementById('numero-input-rem').value;
+        var remetenteComplemento = document.getElementById('complemento-input-rem').value;
+        var remetenteNome = document.getElementById('nome-input-rem').value;
+
+
+        // Restante do código para gerar a etiqueta com os dados obtidos
+        var etiquetaData = {
+            Destinatario: destinatarioLogradouro,
+            Remetente: remetenteLogradouro,
+            DestinatarioCep: destinatarioCEP,
+            RemetenteCep: remetenteCEP,
+            DestinatarioNumero: destinatarioNumero, 
+            DestinatarioComplemento: destinatarioComplemento, 
+            DestinatarioNome: destinatarioNome, 
+            RemetenteNumero: remetenteNumero, 
+            RemetenteComplemento: remetenteComplemento, 
+            RemetenteNome: remetenteNome,
+            DestinatarioCidade: destinatarioCidade,
+            DestinatarioBairro: destinatarioBairro,
+            DestinatarioEstado: destinatarioEstado,
+            RemetenteBairro: remetenteBairro,
+            RemetenteCidade: remetenteCidade,
+            RemetenteEstado: remetenteEstado
+
+
+        };
+
+        fetch('/Etiqueta/GerarEtiqueta', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(etiquetaData)
+        })
+            .then(response => {
+                if (response.ok) {
+                    console.log('Dados da etiqueta enviados com sucesso!');
+                } else {
+                    response.text().then(errorMessage => {
+                        console.error('Erro ao enviar os dados da etiqueta:', errorMessage);
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Erro ao enviar os dados da etiqueta:', error);
+            });
+    });
+
+
+</script>
+
+
+
